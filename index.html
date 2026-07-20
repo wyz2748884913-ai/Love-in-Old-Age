@@ -907,6 +907,17 @@ h1, h2, h3, h4 { font-weight: 300; }
   transform: translateY(0);
 }
 
+/* References staggered fade-in */
+.ref-item {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.ref-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* Image slide-in animations — left/right edge images */
 [data-animate="slide-in-left"] {
   opacity: 0;
@@ -1320,12 +1331,14 @@ svg text { font-family: var(--font-sans); }
 .ref-list {
   list-style: none;
   padding: 0;
-  font-family: var(--font-sans);
-  font-size: var(--text-xs);
-  color: var(--color-cool-deep);
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: #8B7D6F;
   line-height: 2.2;
   max-width: var(--text-width);
   margin: 0 auto;
+  text-align: left;
 }
 
 /* ============================================
@@ -2968,11 +2981,28 @@ body[data-current-chapter="s03"] .chart-figcaption {
     <h2 class="section-title">参考文献</h2>
   </div>
   <ul class="ref-list">
-    <li>1. 《2024 年民政事业发展统计公报》</li>
-    <li>2. 《第五次中国城乡老年人生活状况抽样调查基本数据公报》</li>
-    <li>3. WHO《全球老龄化与健康报告》</li>
-    <li>4. 中国老龄科学研究中心《第五次中国城乡老年人生活状况抽样调查基本数据公报》</li>
-    <li>5. 《从"孤独终老"到"夕阳热恋"：6200万单身老人的爱与勇气，正在改写"新老人"的晚年剧本 银发创投部落》</li>
+    <li class="ref-item">1. 中华人民共和国民政部《2024年民政事业发展统计公报》</li>
+    <li class="ref-item">2. 中华人民共和国民政部《第五次中国城乡老年人生活状况抽样调查基本数据公报》</li>
+    <li class="ref-item">3. 中华人民共和国民政部《分地区按性别和婚姻状况分的人口（2024）》</li>
+    <li class="ref-item">4. 艾媒咨询《2024-2025年中国婚恋社交服务市场研究报告》</li>
+    <li class="ref-item">5. 中国老龄科学研究中心《中国老龄发展报告2024——中国老年人心理健康状况》</li>
+    <li class="ref-item">6. 张继元、李辰阳《中国成年监护服务研究报告2025》</li>
+    <li class="ref-item">7. 中国老龄科学研究中心《老年金融消费者权益保护调查报告》</li>
+    <li class="ref-item">8. 月老儿数据院《2025婚恋市场白皮书》</li>
+    <li class="ref-item">9. 银发创投部落《春节数据洞察|2026银发婚恋市场与老年人情感需求研究报告》</li>
+    <li class="ref-item">10. 姜向群《"搭伴养老"现象与老年人再婚难问题》</li>
+    <li class="ref-item">11. 杜鹏、殷波《两代人对老年人再婚态度的实证分析》</li>
+    <li class="ref-item">12. 田孟《通过婚姻的养老：家庭政治变迁与农村养老责任的代际重构》</li>
+    <li class="ref-item">13. 马艳杰、冀云《中国当代老年人再婚态度及影响因素》</li>
+    <li class="ref-item">14. 杨慧康、陈友华《中国老年婚姻状况及其变动特点研究》</li>
+    <li class="ref-item">15. 李安琪、吴瑞君、尹星星《中国老年人再婚对健康的影响及其作用机制》</li>
+    <li class="ref-item">16. 张现苓、陶涛《中国老年人再婚态度及影响因素分析》</li>
+    <li class="ref-item">17. 杨涵墨《中国人口老龄化新趋势及老年人口新特征》</li>
+    <li class="ref-item">18. 翟振武、刘雯莉《中国人真的都不结婚了吗——从队列的视角看中国人的结婚和不婚》</li>
+    <li class="ref-item">19. 郭俊霞、苏聪聪《黄昏恋的养老功能及其随附风险机制研究》</li>
+    <li class="ref-item">20. 高婉君、胡慧《我国农村"搭伴养老"现象研究述评》</li>
+    <li class="ref-item">21. 王磊《独居老人的养老风险及其规避分析》</li>
+    <li class="ref-item">22. 杨子琪、方子龙《中国老年人抑郁症状与衰弱状态的横向调查研究——中国健康与养老追踪调查》</li>
   </ul>
 </section>
 
@@ -3058,6 +3088,27 @@ body[data-current-chapter="s03"] .chart-figcaption {
   }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
 
   slideElements.forEach(el => slideObserver.observe(el));
+
+  /* References staggered fade-in observer */
+  const refList = document.querySelector('.ref-list');
+  const refItems = document.querySelectorAll('.ref-item');
+  if (refList && refItems.length) {
+    let refAnimated = false;
+    const refObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !refAnimated) {
+          refAnimated = true;
+          refObserver.unobserve(entry.target);
+          refItems.forEach((item, i) => {
+            setTimeout(() => {
+              item.classList.add('visible');
+            }, i * 80);
+          });
+        }
+      });
+    }, { threshold: 0.2 });
+    refObserver.observe(refList);
+  }
 
   /* ==========================================
      Timeline Nav — Click to Scroll
